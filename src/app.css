@@ -1,0 +1,25 @@
+.first {
+    fill: #faebd7;
+    stroke: #14044f;
+    stroke-width: 1px;
+}
+
+#chart {
+    width: 700px;
+    height: 400px;
+    border: 1px solid black;
+}
+
+#dynamic_chart {
+    border: 1px solid black;
+}
+
+#dynamic_chart rect {
+    fill: #d2691e;
+    stroke: #ffffff;
+}
+
+#chart rect {
+    fill: #d2691e;
+    stroke: #ffffff;
+}

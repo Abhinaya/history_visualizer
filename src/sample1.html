@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script type="text/javascript" src="d3.v2.js"></script>
+    <link type="text/css" rel="stylesheet" href="app.css"/>
+    <script type="text/javascript">
+        function draw() {
+            var circles = d3.select("svg").selectAll("circle").data([112,244,178,123])
+            circles.enter().append("circle");
+            circles.exit().remove();
+            circles.attr("cx", function(d) { return d; })
+                    .attr("cy", function(d,i) { return Math.random()*d + i*10 })
+                    .attr("r", function(d) { return 400/d })
+                    .attr("class", "first")
+                    .on("click", woggle)
+                    .transition()
+                    .duration(1000);
+        }
+
+        function woggle() {
+            d3.selectAll("circle").data([34,56,77,90]).transition().duration(500).attr("r", function(d,i) { return d * Math.random() + i * 10} );
+            setTimeout("woggle()", 1000);
+        }
+
+        setTimeout("woggle()", 1000);
+    </script>
+</head>
+<body onload="draw()">
+
+<svg width="500px" height="500px">
+
+</svg>
+</body>
+</html>

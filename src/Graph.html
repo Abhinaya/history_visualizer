@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script type="text/javascript" src="d3.v2.js"></script>
+    <link type="text/css" rel="stylesheet" href="app.css"/>
+    <script type="text/javascript">
+        function drawChart() {
+            var data = [44,23,11,67,12,9,15]
+            var chart = d3.select("#chart");
+            chart.selectAll("rect").data(data)
+                    .enter().append("rect")
+                    .attr("width",function(d) { return d * 10})
+                    .attr("height", 10)
+                    .attr("y", function(d,i) { return i * 10});
+
+            x = d3.scale.linear().domain([0, d3.max(data)]).range([0,700])
+            chart.selectAll("line").data(x.ticks(10))
+                .enter().append("line")
+                .attr("x1", function(v) { return x(v) })
+                .attr("x2", x)
+                .attr("y1", 0)
+                .attr("y2", 500)
+                .style("stroke", "#ccc");
+
+        }
+
+    </script>
+</head>
+
+<body onload="drawChart()">
+<svg id="chart">
+
+</svg>
+</body>
+</html>

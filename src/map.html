@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>History</title>
+    <script src="d3.v2.js" type="text/javascript"></script>
+    <link href="jq/css/ui-lightness/jquery-ui-1.8.19.custom.css" type="text/css" rel="stylesheet"/>
+    <style type="text/css">
+        #viewport{
+            margin:3px;
+        }
+        #timeline{
+            width:1024px;
+            background-color:red;
+            height:15px;
+        }
+        #currentPos{
+            font-size:34px;
+            height:15px;
+            margin:10px;
+        }
+    </style>
+    <script type="text/javascript" src="jq/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="jq/js/jquery-ui-1.8.19.custom.min.js"></script>
+    <script type="text/javascript">
+      function setup(){
+        d3.xml("World-map-colored.svg", "image/svg+xml", function (xml) {
+            $("#viewport").append(xml.documentElement);
+            draw();
+            });
+
+        $("#timeline").slider({min:0,max:1000,
+            slide: function(event, ui) {
+            $("#currentPos").text($(this).slider("value"));
+            moveTo($(this).data('history')[$(this).slider("value")+""]);
+            console.log($(this).data('history')[$(this).slider("value")+""] + " -- " + $(this).slider("value"));
+                    },
+            step: 200
+            }
+            );
+        initData();
+      }
+
+      function initData(){
+            var positions = {};
+            for(var i =0;i<=$("#timeline").slider("option","max");i+=200){
+                positions[i+""] = [[i,i],[Math.random()*(i+100),200],[300,Math.random()*(i+100)],[100,Math.random()*(i+20)]];
+                console.log("setting up for " + i);
+            }
+            console.log(positions);
+            $("#timeline").data("history",positions);
+
+      }
+
+      function moveTo(newPos) {
+          d3.select("#layer1").call(d3.behavior.zoom().on("zoom", redraw));
+            d3.select("#layer1").selectAll("polygon")
+            .transition()
+            .duration(1000)
+            .attr("fill", function(d) {return "black"})
+            .attr("points", function(d) { return newPos });
+          //                    .attr("transform", "scale(1.75,1.75)");
+        }
+
+        function draw() {
+          d3.select("#layer1").call(d3.behavior.zoom().on("zoom", redraw));
+          var polygonData = [ [[100,100], [200,210], [300,300], [100, 250]] ]
+            d3.select("#layer1").selectAll("polygon").data(polygonData)
+            .enter().append("polygon")
+            .attr("fill", function(d) { return "green" })		
+            .attr("stroke", function(d) { return "black" })
+            .attr("points", function(d) { return d})
+          //                    .attr("transform", "scale(1.75,1.75)");
+        }
+
+        function redraw() {
+        console.log("redrawing... " + d3.event.scale);
+        d3.select("#layer1").attr("transform", "translate(" + d3.event.translate  + ")"
+        + "scale(" + d3.event.scale * 1.5 + ")");
+        showDetails(d3.event.scale);
+
+        }
+
+        function showDetails(zoomLevel) {
+        if(zoomLevel > 4) {
+        var points = [[1109,493], [1110,496], [1108,500]]
+        d3.select("#layer1").selectAll("circle").data(points)
+        .enter().append("circle")
+        .attr("cx", function(d) { return d[0]})
+        .attr("cy", function(d) { return d[1]})
+        .attr("r", function(d) { return 0.5});
+
+        }
+        }
+
+        function showMessage() {
+        console.log("Itw orks");
+        }
+
+        $(document).ready(setup);
+    </script>
+</head>
+<body>
+     <div id="viewport"></div>
+     <div id="timeline" style="margin-"></div>
+     <div id="currentPos"></div>
+</body>
+</html>

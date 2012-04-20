@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script type="text/javascript" src="d3.v2.js"></script>
+    <link type="text/css" rel="stylesheet" href="app.css"/>
+    <script type="text/javascript">
+        var time_start = 1000;
+        var data = d3.range(50).map(next);
+
+        function next() {
+            return { time:++time_start,
+                value:Math.min(90, Math.round(Math.random() * 100))
+            }
+        }
+
+        setInterval(function () {
+            data.shift();
+            data.push(next());
+            redraw();
+        }, 1000);
+
+        var chart;
+        var barWidth = 20;
+        var barMaxHeight = 200;
+        var x = d3.scale.linear().domain([0, 1]).range([0, barWidth])
+        var y = d3.scale.linear().domain([0, 90]).range([0, barMaxHeight])
+
+        function init() {
+            console.log("initing");
+            chart = d3.select("#dynamic_chart");
+            chart.attr("width", (data.length * barWidth) - barWidth).attr("height", barMaxHeight);
+            //chart.selectAll("rect").data(data)
+        }
+
+        function redraw() {
+            var rect = chart.selectAll("rect").data(data, function(d) {return d.time;});
+            rect.enter().insert("rect")
+                    .attr("width", barWidth)
+                    .attr("height", function(dat) {return y(dat.value) })
+                    .attr("x", function(dat,i) {return x(i+1)})
+                    .attr("y", function(dat) {return (barMaxHeight - y(dat.value))})
+                    .transition()
+                    .duration(1000)
+                    .attr("x", function(dat,i) {return x(i)});
+
+            rect.transition().duration(1000)
+                .attr("x", function(dat,i) {return x(i)})
+
+            rect.exit()
+                .transition().duration(1000)
+                .attr("x", function(dat,i) {return x(i-1)})
+                .remove();
+        }
+
+
+    </script>
+</head>
+<body onload="init()">
+<svg id="dynamic_chart">
+
+</svg>
+</body>
+</html>
